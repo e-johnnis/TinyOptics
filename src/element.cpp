@@ -12,11 +12,6 @@ namespace topt {
         
         if(shape->getIntersection(rb.origin, rb.direction, position, vi, vn) > diameter*0.5) {
             rb.valid = 0;
-            #ifdef DEBUG
-            std::printf("org={%lf,%lf,%lf}\n", rb.origin[0], rb.origin[1], rb.origin[2]);
-            std::printf("dir={%lf,%lf,%lf}\n", rb.direction[0], rb.direction[1], rb.direction[2]);
-            std::printf("int={%lf,%lf,%lf}\n", vi[0], vi[1], vi[2]);
-            #endif
             return rb;
         }
 

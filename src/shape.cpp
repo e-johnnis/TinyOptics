@@ -13,7 +13,7 @@ namespace topt {
         double t = (position[2] - origin[2]) / direction[2];
 
         intersection = origin + direction * t;
-        normalVector = { 0, 0, 1 };
+        normalVector = { 0, 0, -1 };
         Vec<3> vip = intersection - position;
         return std::sqrt(vip[0] * vip[0] + vip[1] * vip[1]);
     }
