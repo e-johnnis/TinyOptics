@@ -42,7 +42,7 @@ int main() {
 
     for(int i = 0; i < 4; i++) {
         double ih = i * 6.0;
-        topt::Vec<3> dir = { 0, -ih, nar.focalLength };
+        topt::Vec<3> dir = { 0, ih, nar.focalLength };
         std::vector<std::vector<topt::Ray>> rays = sys.trace2d(dir, topt::ray_d, nar, 100, 101, &md);
     }
 

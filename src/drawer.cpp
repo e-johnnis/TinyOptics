@@ -42,8 +42,8 @@ namespace topt {
             std::fprintf(
                 _fp,
                 "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2 = \"%5.3lf\" y2=\"%5.3lf\" stroke=\"#%08X\" stroke-width=\"0.15\" />\n",
-                rays[i].origin[2], rays[i].origin[1],
-                rays[i+1].origin[2], rays[i+1].origin[1],
+                rays[i].origin[2], -rays[i].origin[1],
+                rays[i+1].origin[2], -rays[i+1].origin[1],
                 col
             );
         }
@@ -52,8 +52,8 @@ namespace topt {
         std::fprintf(
             _fp,
             "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2 = \"%5.3lf\" y2=\"%5.3lf\" stroke=\"#%08X\" stroke-width=\"0.15\" />\n",
-            rays[il].origin[2], rays[il].origin[1],
-            zFocus, yf,
+            rays[il].origin[2], -rays[il].origin[1],
+            zFocus, -yf,
             col
         );
     }
