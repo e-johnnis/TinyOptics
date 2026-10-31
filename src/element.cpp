@@ -1,5 +1,6 @@
 #include<topt.hpp>
 #include<cmath>
+#include<cstdio>
 
 namespace topt {
 
@@ -11,15 +12,20 @@ namespace topt {
         
         if(shape->getIntersection(rb.origin, rb.direction, position, vi, vn) > diameter*0.5) {
             rb.valid = 0;
+            #ifdef DEBUG
+            std::printf("org={%lf,%lf,%lf}\n", rb.origin[0], rb.origin[1], rb.origin[2]);
+            std::printf("dir={%lf,%lf,%lf}\n", rb.direction[0], rb.direction[1], rb.direction[2]);
+            std::printf("int={%lf,%lf,%lf}\n", vi[0], vi[1], vi[2]);
+            #endif
             return rb;
         }
 
-        Vec<3> vs = rb.direction / rb.direction.size();
-        Vec<3> vsh = vs - vn * (vs * vn);
-        double D = 1.0 - ne * ne * (vsh * vsh);
-        int valid = D >= 0;
+        Vec<3> vs = -rb.direction / rb.direction.size();
+        double sn = vs * vn;
+        double D = 1.0 - ne * ne * (1.0 - sn * sn);
+        int valid = (D >= 0);
 
-        Vec<3> vr = valid ? vsh * ne + vn * std::sqrt(D) : rb.direction;
+        Vec<3> vr = valid ? -ne * (vs - vn * sn) - vn * std::sqrt(D) : rb.direction;
 
         return { rb.waveLength, vi, vr, valid };
     }
@@ -32,6 +38,10 @@ namespace topt {
             1.0,  0.0,
             (n1 - n2) / (shape->radius * n2), n1 / n2
         };
+    }
+
+    void Refractor::drawSvgModel(std::FILE* fp) const {
+        shape->drawSvgModel(fp, position, diameter);
     }
 
     const Ray Aperture::trace(Ray& rb, const Glass& gb) const {
@@ -49,5 +59,20 @@ namespace topt {
 
     Mat<2> Aperture::getGaussianMatrix(double waveLength, const Glass& gb, double& petzvarSum) const {
         return eMat<2>();
+    }
+
+    void Aperture::drawSvgModel(std::FILE* fp) const {
+        double d2 = diameter * 0.6;
+        double i2 = diameter * 0.5;
+        std::fprintf(
+            fp,
+            "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"0.3\" />\n",
+            position[2], position[1] - d2, position[2], position[1] - i2
+        );
+        std::fprintf(
+            fp,
+            "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"0.3\" />\n",
+            position[2], position[1] + d2, position[2], position[1] + i2
+        );
     }
 }

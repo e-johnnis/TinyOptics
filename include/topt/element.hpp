@@ -3,6 +3,7 @@
 
 #include<topt/matrix.hpp>
 #include<topt/shape.hpp>
+#include<cstdio>
 
 namespace topt {
 
@@ -29,6 +30,8 @@ namespace topt {
 
         virtual const Ray   trace(Ray&, const Glass&) const = 0;
         virtual Mat<2>      getGaussianMatrix(double, const Glass&, double&) const = 0;
+
+        virtual void        drawSvgModel(std::FILE*) const = 0;
     };
 
     class Refractor : public Element {
@@ -40,6 +43,8 @@ namespace topt {
 
         virtual const Ray   trace(Ray&, const Glass&) const override;
         virtual Mat<2>      getGaussianMatrix(double, const Glass&, double&) const override;
+
+        virtual void        drawSvgModel(std::FILE*) const override;
     };
 
     class Aperture : public Element {
@@ -51,6 +56,8 @@ namespace topt {
 
         virtual const Ray   trace(Ray&, const Glass&) const override;
         virtual Mat<2>      getGaussianMatrix(double, const Glass&, double&) const override;
+
+        virtual void        drawSvgModel(std::FILE*) const override;
     };
 
 }

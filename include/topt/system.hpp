@@ -1,31 +1,41 @@
 #ifndef __TOPT_SYSTEM_HPP
 #define __TOPT_SYSTEM_HPP 0
 
+#include<topt/core.hpp>
 #include<topt/element.hpp>
 #include<vector>
 
 namespace topt {
 
+    class ModelDrawer;
+
     class System {
     public:
-        std::vector<Element*> elements;
-
         System() {};
         ~System() {
-            for(int i = 0; i < elements.size(); i++) {
-                if(!elements[i]) delete elements[i];
-                elements[i] = NULL;
+            for(int i = 0; i < _elements.size(); i++) {
+                if(!_elements[i]) delete _elements[i];
+                _elements[i] = NULL;
             }
-            elements.clear();
+            _elements.clear();
         }
 
-        Element*    operator [] (int i) { return elements[i]; }
+        Element*    operator [] (int i) { return _elements[i]; }
+
+        int size() const { return _elements.size(); }
 
         int add(Element*);
         int remove(Element*);
         int removeAt(int);
 
         NearAxisResult analyze_nearAxis(double) const;
+
+        std::vector<std::vector<Ray>> trace2d(const Vec<3>&, double, const NearAxisResult&, double, int, const ModelDrawer*) const;
+
+    private:
+        std::vector<Element*> _elements;
+
+        std::vector<Ray> _trace(Ray&) const;
 
     };
 

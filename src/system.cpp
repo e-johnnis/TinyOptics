@@ -1,26 +1,28 @@
 #include<topt.hpp>
+#include<topt/color.hpp>
+#include<vector>
 
 namespace topt {
 
     int System::add(Element* ep) {
-        elements.push_back(ep);
-        return elements.size();
+        _elements.push_back(ep);
+        return _elements.size();
     }
 
     int System::removeAt(int i) {
-        delete elements[i];
-        elements.erase(elements.begin() + i);
-        return elements.size();
+        delete _elements[i];
+        _elements.erase(_elements.begin() + i);
+        return _elements.size();
     }
 
     NearAxisResult System::analyze_nearAxis(double waveLength) const {
         double ps = 0;
         Mat<2> tm = eMat<2>();
-        Mat<2> gm = elements[0]->getGaussianMatrix(waveLength, air, ps);
+        Mat<2> gm = _elements[0]->getGaussianMatrix(waveLength, air, ps);
 
-        for(int i = 1; i < elements.size(); i++) {
-            tm[0][1] = (elements[i-1]->position[2] - elements[i]->position[2]) / getRefractance(elements[i-1]->glass, waveLength);
-            gm = elements[i]->getGaussianMatrix(waveLength, elements[i-1]->glass, ps) * tm * gm;
+        for(int i = 1; i < _elements.size(); i++) {
+            tm[0][1] = (_elements[i-1]->position[2] - _elements[i]->position[2]) / getRefractance(_elements[i-1]->glass, waveLength);
+            gm = _elements[i]->getGaussianMatrix(waveLength, _elements[i-1]->glass, ps) * tm * gm;
         }
 
         NearAxisResult result;
@@ -29,5 +31,46 @@ namespace topt {
         result.rearToPricipal = (1.0 - gm[0][0]) * result.focalLength;
         result.petzvarSum = ps;
         return result;
+    }
+
+    std::vector<std::vector<Ray>> System::trace2d(
+        const Vec<3>& direction, double waveLength, const NearAxisResult& nar,
+        double diameter, int maxRays,
+        const ModelDrawer* drawer = NULL
+    ) const {
+        std::vector<std::vector<Ray>> rays;
+        double pitch = diameter / maxRays;
+        double zf = nar.focalLength + nar.rearToPricipal + _elements[_elements.size()-1]->position[2];
+
+        for(int i = 0; i < maxRays; i++) {
+            double y = (i % 2) ? (-pitch * (1+i/2)) : (pitch * i/2);
+            double dydz = direction[1] / direction[2];
+            double dz = nar.frontToPrincipal + 1;
+            Vec<3> orig = { 0, y - dydz * dz, -1 };
+            Ray ir = { waveLength, orig, direction, 1 };
+            
+            std::vector<Ray> irs = _trace(ir);
+            if(irs[irs.size()-1].valid) rays.push_back(irs);
+        }
+
+        if(drawer && rays.size()) {
+            drawer->drawRays(rays[0], zf);
+            drawer->drawRays(rays[rays.size()-1], zf);
+            drawer->drawRays(rays[rays.size()-2], zf);
+        }
+
+        return rays;
+    }
+
+    std::vector<Ray> System::_trace(Ray& enter) const {
+        std::vector<Ray> rays;
+        rays.push_back(enter);
+        rays.push_back(_elements[0]->trace(enter, air));
+
+        for(int i = 1; i < _elements.size(); i++) {
+            rays.push_back(_elements[i]->trace(rays[i], _elements[i-1]->glass));
+        }
+
+        return rays;
     }
 }

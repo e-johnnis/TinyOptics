@@ -7,15 +7,8 @@
 
 namespace topt {
 
-    enum RayIndex {
-        RAY_C,
-        RAY_d,
-        RAY_F,
-        RAY_g
-    };
-
     struct Ray {
-        double  waveLength;
+        double  waveLength; // [um]
         Vec<3>  origin;
         Vec<3>  direction;
         int     valid = 1;

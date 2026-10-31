@@ -1,8 +1,9 @@
-#ifndef __TOPT__DRAWER_HPP
-#define __TOPT__DRAWER_HPP 0
+#ifndef __TOPT_DRAWER_HPP
+#define __TOPT_DRAWER_HPP 0
 
 #include<topt/system.hpp>
 #include<cstdio>
+#include<vector>
 
 namespace topt {
 
@@ -15,24 +16,25 @@ namespace topt {
 
     class SvgDrawer {
     public:
-        SvgDrawer(std::FILE*, const SvgViewBox&, int);
-        ~SvgDrawer() { close(); }
+        SvgDrawer(std::FILE* fp) { _fp = fp; }
+        ~SvgDrawer() {}
 
-        virtual void close();
+        virtual void initialize(const SvgViewBox&) const;
+        virtual void finalize() const;
 
-        virtual void drawModel(const System&) const;
-        virtual void drawRays(const Ray&, double, int) const;
-
-    private:
+    protected:
         std::FILE*  _fp;
-        int         _isProcess;
     };
 
     class ModelDrawer : public SvgDrawer {
     public:
-        ModelDrawer(std::FILE* fp, const SvgViewBox& viewBox, int isProcess) : SvgDrawer(fp, viewBox, isProcess) {}
+        ModelDrawer(std::FILE* fp) : SvgDrawer(fp) {};
         ~ModelDrawer() {}
-    }
+
+        virtual void initialize(const SvgViewBox&) const override;
+        void draw(System&) const;
+        void drawRays(const std::vector<Ray>&, double) const;
+    };
 
 }
 
