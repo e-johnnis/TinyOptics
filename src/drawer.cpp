@@ -34,6 +34,32 @@ namespace topt {
         }
     }
 
+    void ModelDrawer::draw(System& sys, const NearAxisResult& nar, double maxImageHeight) const {
+        draw(sys);
+        
+        if(sys.size()) {
+            double zpf = sys[0]->position[2] + nar.frontToPrincipal;
+            double zpr = sys[sys.size()-1]->position[2] + nar.rearToPricipal;
+            double zim = zpr + nar.focalLength;
+
+            if(std::isfinite(zpf)) std::fprintf(
+                _fp,
+                "  <line x1=\"%5.3lf\" y1=\"-1\" x2=\"%5.3lf\" y2=\"1\" stroke=\"#BB0000\" stroke-width=\"0.3\" />\n",
+                zpf, zpf
+            );
+            if(std::isfinite(zpr)) std::fprintf(
+                _fp,
+                "  <line x1=\"%5.3lf\" y1=\"-1\" x2=\"%5.3lf\" y2=\"1\" stroke=\"#0000BB\" stroke-width=\"0.3\" />\n",
+                zpr, zpr
+            );
+            if(std::isfinite(zim)) std::fprintf(
+                _fp,
+                "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"0.3\" />\n",
+                zim, -maxImageHeight, zim, maxImageHeight
+            );
+        }
+    }
+
     void ModelDrawer::drawRays(const std::vector<Ray>& rays, double zFocus) const {
         int il = rays.size()-1;
         int col = wl2color(rays[0].waveLength);

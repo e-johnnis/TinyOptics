@@ -33,6 +33,7 @@ namespace topt {
 
         virtual void initialize(const SvgViewBox&) const override;
         void draw(System&) const;
+        void draw(System&, const NearAxisResult&, double) const;
         void drawRays(const std::vector<Ray>&, double) const;
     };
 

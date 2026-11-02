@@ -40,13 +40,13 @@ int main() {
     topt::ModelDrawer md(fp);
     md.initialize(vb);
 
-    for(int i = 0; i < 4; i++) {
-        double ih = i * 6.0;
+    for(int i = 0; i <= 4; i++) {
+        double ih = i * 3.0;
         topt::Vec<3> dir = { 0, ih, nar.focalLength };
         std::vector<std::vector<topt::Ray>> rays = sys.trace2d(dir, topt::ray_d, nar, 100, 101, &md);
     }
 
-    md.draw(sys);
+    md.draw(sys, nar, 12);
 
     md.finalize();
     std::fclose(fp);
