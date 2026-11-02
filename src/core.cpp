@@ -13,6 +13,19 @@ namespace topt {
         return std::sqrt(r2);
     }
 
+    int refract(double n1, double n2, const Vec<3>& vn, const Vec<3>& vi, Vec<3>& vr) {
+        double ne = n1 / n2;
+        Vec<3> vs = -vi / vi.size();
+
+        double sn = vs * vn;
+        double D = 1.0 - ne * ne * (1.0 - sn * sn);
+        int valid = (D >= 0);
+
+        vr = valid ? -ne * (vs - vn * sn) - vn * std::sqrt(D) : vi;
+
+        return valid;
+    }
+
     int wl2color(double waveLength) {
         double ip = -1;
         double t = std::modf((waveLength - cie2006.wl0) / cie2006.dwl, &ip);

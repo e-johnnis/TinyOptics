@@ -15,12 +15,8 @@ namespace topt {
             return rb;
         }
 
-        Vec<3> vs = -rb.direction / rb.direction.size();
-        double sn = vs * vn;
-        double D = 1.0 - ne * ne * (1.0 - sn * sn);
-        int valid = (D >= 0);
-
-        Vec<3> vr = valid ? -ne * (vs - vn * sn) - vn * std::sqrt(D) : rb.direction;
+        Vec<3> vr;
+        int valid = refract(getRefractance(gb, rb.waveLength), getRefractance(glass, rb.waveLength), vn, rb.direction, vr);
 
         return { rb.waveLength, vi, vr, valid };
     }

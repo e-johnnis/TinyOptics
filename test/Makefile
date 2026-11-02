@@ -3,7 +3,7 @@ CXX:=g++ -DDEBUG -g -fopenmp -o $(EXE)
 INCLUDE:=-I ../include
 SVG_DIR:=./svg
 
-SRC=../src/optcore.cpp ../src/shape.cpp ../src/element.cpp ../src/system.cpp ../src/drawer.cpp
+SRC=../src/core.cpp ../src/shape.cpp ../src/element.cpp ../src/system.cpp ../src/drawer.cpp
 
 .PHONY:	matrix naa seq
 
