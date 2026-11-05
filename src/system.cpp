@@ -21,14 +21,14 @@ namespace topt {
         Mat<2> gm = _elements[0]->getGaussianMatrix(waveLength, air, ps);
 
         for(int i = 1; i < _elements.size(); i++) {
-            tm[0][1] = (_elements[i]->position[2] - _elements[i-1]->position[2]) / getRefractance(_elements[i-1]->glass, waveLength);
+            tm[0][1] = (_elements[i-1]->position[2] - _elements[i]->position[2]) / getRefractance(_elements[i-1]->glass, waveLength);
             gm = _elements[i]->getGaussianMatrix(waveLength, _elements[i-1]->glass, ps) * tm * gm;
         }
 
         NearAxisResult result;
         result.focalLength = 1.0 / gm[1][0];
-        result.frontToPrincipal = (gm[1][1] - 1.0) * result.focalLength;
-        result.rearToPricipal = (1.0 - gm[0][0]) * result.focalLength;
+        result.frontToPrincipal = (1.0 - gm[1][1]) * result.focalLength;
+        result.rearToPricipal = (gm[0][0] - 1.0) * result.focalLength;
         result.petzvarSum = ps;
         return result;
     }

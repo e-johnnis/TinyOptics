@@ -62,7 +62,7 @@ namespace topt {
     void SphericalSurface::drawSvgModel(std::FILE* fp, const Vec<3>& position, double diameter) const {
         double d2 = diameter * 0.5;
         double ar = std::abs(radius);
-        double dz = -radius * (1.0 - std::cos(std::atan2(d2, ar)));
+        double dz = ((radius < 0) ? 1 : -1) * (ar - std::sqrt(radius * radius - d2 * d2));
         std::fprintf(
             fp,
             "  <path d=\"M %5.3lf %5.3lf a %5.3lf %5.3lf 0 0 %d 0 %5.3lf\" stroke=\"#000000\" stroke-width=\"%f\" fill=\"none\" />\n",
