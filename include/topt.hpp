@@ -8,5 +8,6 @@
 #include<topt/analysis.hpp>
 #include<topt/system.hpp>
 #include<topt/drawer.hpp>
+#include<topt/catalog.hpp>
 
 #endif

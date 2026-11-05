@@ -28,6 +28,8 @@ namespace topt {
         }
         ~Element() { delete shape; }
 
+        virtual const char* getType() const = 0;
+
         virtual const Ray   trace(Ray&, const Glass&) const = 0;
         virtual Mat<2>      getGaussianMatrix(double, const Glass&, double&) const = 0;
 
@@ -37,9 +39,13 @@ namespace topt {
     class Refractor : public Element {
     public:
 
+        Refractor(double diam, const Vec<3>& pos, const Glass& g, Shape* s) : Element(diam, pos, g, s) {}
+        Refractor(double diam, double zPos, const Glass& g, Shape* s) : Element(diam, zPos, g, s) {}
         Refractor(double diam, const Vec<3>& pos, const Glass& g, double r) : Element(diam, pos, g, new SphericalSurface(r)) {}
         Refractor(double diam, double zPos, const Glass& g, double r) : Element(diam, zPos, g, new SphericalSurface(r)) {}
         ~Refractor() {}
+
+        virtual const char* getType() const override { return "REFRACTOR"; }
 
         virtual const Ray   trace(Ray&, const Glass&) const override;
         virtual Mat<2>      getGaussianMatrix(double, const Glass&, double&) const override;
@@ -53,6 +59,8 @@ namespace topt {
         Aperture(double diam, const Vec<3>& pos) : Element(diam, pos, air, new Plane()) {}
         Aperture(double diam, double zPos) : Element(diam, zPos, air, new Plane()) {}
         ~Aperture() {}
+
+        virtual const char* getType() const override { return "APERTURE"; }
 
         virtual const Ray   trace(Ray&, const Glass&) const override;
         virtual Mat<2>      getGaussianMatrix(double, const Glass&, double&) const override;

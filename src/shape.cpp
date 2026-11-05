@@ -22,8 +22,9 @@ namespace topt {
         double d2 = diameter * 0.5;
         std::fprintf(
             fp,
-            "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"0.3\" />\n",
-            position[2], -position[1] - d2, position[2], -position[1] + d2
+            "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"%f\" />\n",
+            position[2], -position[1] - d2, position[2], -position[1] + d2,
+            TOPT_LINE_BOLD
         );
     }
 
@@ -64,8 +65,9 @@ namespace topt {
         double dz = -radius * (1.0 - std::cos(std::atan2(d2, ar)));
         std::fprintf(
             fp,
-            "  <path d=\"M %5.3lf %5.3lf a %5.3lf %5.3lf 0 0 %d 0 %5.3lf\" stroke=\"#000000\" stroke-width=\"0.3\" fill=\"none\" />\n",
-            position[2] - dz, -position[1] - d2, ar, ar, radius < 0, diameter
+            "  <path d=\"M %5.3lf %5.3lf a %5.3lf %5.3lf 0 0 %d 0 %5.3lf\" stroke=\"#000000\" stroke-width=\"%f\" fill=\"none\" />\n",
+            position[2] - dz, -position[1] - d2, ar, ar, radius < 0, diameter,
+            TOPT_LINE_BOLD
         );
     }
 

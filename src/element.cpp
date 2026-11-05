@@ -27,7 +27,7 @@ namespace topt {
         petzvarSum += (1.0 / n1 - 1.0 / n2) / shape->radius;
         return {
             1.0,  0.0,
-            (n1 - n2) / (shape->radius * n2), n1 / n2
+            (n2 - n1) / shape->radius, 1
         };
     }
 
@@ -40,7 +40,7 @@ namespace topt {
 
         Vec<3> vi, vn;
         
-        if(shape->getIntersection(rb.origin, rb.direction, position, vi, vn) <= diameter*0.5) {
+        if(shape->getIntersection(rb.origin, rb.direction, position, vi, vn) > diameter*0.5) {
             rb.valid = 0;
             return rb;
         }
@@ -57,13 +57,15 @@ namespace topt {
         double i2 = diameter * 0.5;
         std::fprintf(
             fp,
-            "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"0.3\" />\n",
-            position[2], -position[1] - d2, position[2], -position[1] - i2
+            "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"%f\" />\n",
+            position[2], -position[1] - d2, position[2], -position[1] - i2,
+            TOPT_LINE_BOLD
         );
         std::fprintf(
             fp,
-            "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"0.3\" />\n",
-            position[2], -position[1] + d2, position[2], -position[1] + i2
+            "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#000000\" stroke-width=\"%f\" />\n",
+            position[2], -position[1] + d2, position[2], -position[1] + i2,
+            TOPT_LINE_BOLD
         );
     }
 }

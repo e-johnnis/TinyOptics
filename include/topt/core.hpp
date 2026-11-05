@@ -32,6 +32,7 @@ namespace topt {
     const double    ray_g = 0.435835;
 
     double getRefractance(const Glass&, double);
+    double getAbbeVd(const Glass&);
     int refract(double, double, const Vec<3>&, const Vec<3>&, Vec<3>&);
 
 }

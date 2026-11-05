@@ -21,13 +21,13 @@ namespace topt {
         Mat<2> gm = _elements[0]->getGaussianMatrix(waveLength, air, ps);
 
         for(int i = 1; i < _elements.size(); i++) {
-            tm[0][1] = (_elements[i-1]->position[2] - _elements[i]->position[2]) / getRefractance(_elements[i-1]->glass, waveLength);
+            tm[0][1] = (_elements[i]->position[2] - _elements[i-1]->position[2]) / getRefractance(_elements[i-1]->glass, waveLength);
             gm = _elements[i]->getGaussianMatrix(waveLength, _elements[i-1]->glass, ps) * tm * gm;
         }
 
         NearAxisResult result;
-        result.focalLength = -1.0 / gm[1][0];
-        result.frontToPrincipal = (1.0 - gm[1][1]) * result.focalLength;
+        result.focalLength = 1.0 / gm[1][0];
+        result.frontToPrincipal = (gm[1][1] - 1.0) * result.focalLength;
         result.rearToPricipal = (1.0 - gm[0][0]) * result.focalLength;
         result.petzvarSum = ps;
         return result;
@@ -45,18 +45,19 @@ namespace topt {
         for(int i = 0; i < maxRays; i++) {
             double y = (i % 2) ? (-pitch * (1+i/2)) : (pitch * i/2);
             double dydz = direction[1] / direction[2];
-            double dz = nar.frontToPrincipal + 1;
-            Vec<3> orig = { 0, y - dydz * dz, -1 };
+            double dz = nar.frontToPrincipal + 1.0;
+            Vec<3> orig = { 0, y - dydz * dz, -1.0 };
             Ray ir = { waveLength, orig, direction, 1 };
             
-            std::vector<Ray> irs = _trace(ir);
-            if(irs[irs.size()-1].valid) rays.push_back(irs);
+            rays.push_back(_trace(ir));
         }
 
         if(drawer && rays.size()) {
             drawer->drawRays(rays[0], zf);
-            drawer->drawRays(rays[rays.size()-1], zf);
-            drawer->drawRays(rays[rays.size()-2], zf);
+            int i = rays.size() - 1;
+            while((i >= 0) && !drawer->drawRays(rays[i], zf)) i -= 2;
+            i = rays.size() - 2;
+            while((i >= 0) && !drawer->drawRays(rays[i], zf)) i -= 2;
         }
 
         return rays;

@@ -13,6 +13,10 @@ namespace topt {
         return std::sqrt(r2);
     }
 
+    double getAbbeVd(const Glass& g) {
+        return (getRefractance(g, ray_d) - 1.0) / (getRefractance(g, ray_F) - getRefractance(g, ray_C));
+    }
+
     int refract(double n1, double n2, const Vec<3>& vn, const Vec<3>& vi, Vec<3>& vr) {
         double ne = n1 / n2;
         Vec<3> vs = -vi / vi.size();
