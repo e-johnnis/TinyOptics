@@ -24,6 +24,11 @@ namespace topt {
         SvgDrawer::initialize(viewBox);
         std::fprintf(
             _fp,
+            "  <rect x=\"%5.3lf\" y=\"%5.3lf\" width=\"%5.3lf\" height=\"%5.3lf\" fill=\"#FFFFFF\" stroke=\"none\" />\n",
+            viewBox.x, viewBox.y, viewBox.width, viewBox.height
+        );
+        std::fprintf(
+            _fp,
             "  <line x1=\"%5.3lf\" y1=\"0\" x2=\"%5.3lf\" y2=\"0\" stroke=\"#000000\" stroke-width=\"%f\" />\n",
             viewBox.x, viewBox.width + viewBox.x,
             TOPT_LINE_REGULAR
@@ -94,7 +99,11 @@ namespace topt {
     RayFanDrawer::RayFanDrawer(std::FILE* fp, double yScale) : SvgDrawer::SvgDrawer(fp) {
         _yScale = yScale;
 
-        initialize({ -60, -55, 115, 125 });
+        initialize({ -60, -55, 125, 115 });
+        std::fprintf(
+            _fp,
+            "  <rect x=\"-60\" y=\"-55\" width=\"125\" height=\"115\" fill=\"#FFFFFF\" stroke=\"none\" />\n"
+        );
         std::fprintf(
             _fp,
             "  <line x1=\"0\" y1=\"-50\" x2=\"0\" y2=\"50\" stroke=\"#000000\" stroke-width=\"%f\" />\n",
@@ -118,7 +127,7 @@ namespace topt {
         );
         std::fprintf(
             _fp,
-            "  <text x=\"-52\" y=\"0\" fill=\"#000000\" stroke=\"none\" font-size=\"3\" text-anchor=\"middle\" transform=\"rotate(-90, -52, 0)\">Image Height [um]</text>\n"
+            "  <text x=\"-52\" y=\"0\" fill=\"#000000\" stroke=\"none\" font-size=\"3\" text-anchor=\"middle\" transform=\"rotate(-90, -52, 0)\">Transverse Ray Aberration [um]</text>\n"
         );
         std::fprintf(
             _fp,
@@ -168,15 +177,23 @@ namespace topt {
 
         std::sort(plots.begin(), plots.end(), [](Vec<2> a, Vec<2> b){ return a[0] < b[0]; });
 
+        double yl = 0;
         for(int i = 0; i < plots.size()-1; i++) {
+            if((std::abs(plots[i][1]) > _yScale || (std::abs(plots[i+1][1]) > _yScale))) continue;
+            yl = -50.0 * plots[i+1][1] / _yScale;
             std::fprintf(
                 _fp,
                 "  <line x1=\"%5.3lf\" y1=\"%5.3lf\" x2=\"%5.3lf\" y2=\"%5.3lf\" stroke=\"#%08X\" stroke-width=\"%f\" />\n",
                 50.0 * plots[i][0] / xs, -50.0 * plots[i][1] / _yScale,
-                50.0 * plots[i+1][0] / xs, -50.0 * plots[i+1][1] / _yScale,
+                50.0 * plots[i+1][0] / xs, yl,
                 col, TOPT_LINE_BOLD
             );
         }
+        std::fprintf(
+            _fp,
+            "  <text x=\"51\" y=\"%5.3lf\" fill=\"#%08X\" stroke=\"none\" font-size=\"3\" text-anchor=\"begin\">%3.1lfum</text>\n",
+            yl + 1, col, rays[0][0].waveLength * 1000.0
+        );
     }
 
 }

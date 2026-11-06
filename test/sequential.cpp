@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     for(int i = 0; i <= 4; i++) {
         double ih = i * 3.0;
         char fnrf[64];
-        std::sprintf(fnrf, "svg/seq/rayFan-%3.1lf.svg", ih);
+        std::sprintf(fnrf, "svg/seq/rayFan-%04.1lf.svg", ih);
 
         topt::Vec<3> dir = { 0, ih, nar.focalLength };
         std::vector<std::vector<topt::Ray>> rays = sys.trace2d(dir, topt::ray_d, nar, 100, 101, &md);
