@@ -191,7 +191,7 @@ namespace topt {
         }
         std::fprintf(
             _fp,
-            "  <text x=\"51\" y=\"%5.3lf\" fill=\"#%08X\" stroke=\"none\" font-size=\"3\" text-anchor=\"begin\">%3.1lfum</text>\n",
+            "  <text x=\"51\" y=\"%5.3lf\" fill=\"#%08X\" stroke=\"none\" font-size=\"3\" text-anchor=\"begin\">%3.1lfnm</text>\n",
             yl + 1, col, rays[0][0].waveLength * 1000.0
         );
     }
